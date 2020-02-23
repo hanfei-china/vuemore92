@@ -1,6 +1,6 @@
 内容：
 
-- 介绍一款编辑器
+- 介绍一款编辑编译器
 - 了解一种混合开发方式
 - 把前面开发的黑马头条打包成一个app
 
@@ -10,13 +10,13 @@
   - [hbuilderX](https://www.dcloud.io/hbuilderx.html): 一个强大的编辑器，用来编辑代码。
   - [夜神模拟器](https://www.yeshen.com/)：一个安卓手机模拟器，用来调试代码。
 - 硬件：
-  - 手机数据线。用来做真机调试，安装打包后的app。
+  - 手机数据线。连接到电脑上来用来做真机调试，安装打包后的app。
 
-## DCloud-HTML5+介绍-HBuliderX安装和完整示例项目
+## DCloud-HTML5+介绍
 
 > DCloud是什么?  HTML5+又是什么?
 
-[DCloun官网](https://www.dcloud.io/index.html)
+[DCloud官网](https://www.dcloud.io/index.html)
 
 DCloud面向HTML5行业分别推出了：
 
@@ -172,29 +172,39 @@ document.getElementById("btnCamera").addEventListener("tap",()=>{
 参考：
 
 - [摄像头](http://www.html5plus.org/doc/zh_cn/camera.html)
-
 - [拍照api](http://www.html5plus.org/doc/zh_cn/camera.html#plus.camera.Camera.captureImage)
+
+步骤：
+
+- 给dom添加点击事件（移动端建议使用tap来代替click）
+- 在回调函数中来获取相机，拍照，把照片设置成img标签的src
 
 参考代码
 
 ```javascript
-document.getElementById("btnCamera").addEventListener('tap', () => {
-    if (plus) {
-        var carmera = plus.camera.getCamera(1) // 获取主摄像头对象
-        carmera.captureImage(function(url) {
-            // 注意这个地址不能用 需要转化
-            // 需要将相对手机路径变成绝对路径
-            let absoluteUrl = plus.io.convertLocalFileSystemURL(url)
-            // 我们把地址放到一个新的图片上
-            let imageBox = document.createElement("div")
-            imageBox.className = "image-box"
-            let img = document.createElement("img")
-            img.src = absoluteUrl
-            imageBox.appendChild(img)
+document.getElementById("btnCamera").addEventListener("tap",()=>{
+    console.log('tap')
+    // 调用相机来拍照
+    // 1. 获取摄像头 
+    // plus是自动加持的（只要在真机或者是模拟器中运行，就有plus）。
+    // plus.camera.getCamera: 是5+提供的系统功能。
+    // index: ( Number ) 可选 要获取摄像头的索引值
+    // 指定要获取摄像头的索引值，1表示主摄像头，2表示辅摄像头。如果没有设置则使用系统默认主摄像头。
+    let camera = plus.camera.getCamera(1);
+    console.log(camera)
+    // 2. 用摄像头拍照
+    camera.captureImage((url)=>{
+        // 拍照成功之后，保存之后，这里的url就是照片的地址
+        // 这个地址是相对地址，如果要想使用，则需要改成绝对路径。
 
-            document.getElementById("content").appendChild(imageBox)
-        })
-    }
+        // 调用系统方法，来转换路径
+        let absoluteUrl = plus.io.convertLocalFileSystemURL(url)
+
+        // 把照片设置到img上。
+        document.getElementById("image").src= absoluteUrl
+        console.log(url)
+    })
+
 })
 ```
 
@@ -230,18 +240,18 @@ document.getElementById("btnCamera").addEventListener('tap', () => {
 
 #### 目标
 
-​	点击按钮之后，显示百度地图信息。
+​	点击按钮之后，显示地图信息。
 
 #### 思路
 
-​	调用[地图API]([http://www.html5plus.org/doc/zh_cn/maps.html#plus.maps.Map.Map(domId,%20styles)](http://www.html5plus.org/doc/zh_cn/maps.html#plus.maps.Map.Map(domId, styles))地图代码
+​	调用[地图API](http://www.html5plus.org/doc/zh_cn/maps.html#plus.maps.Map.Map(domId,%20styles)地图代码
 
 #### 准备dom结构
 
 ```html
 <div id="map">
-				加载中...
-			</div>
+    加载中...
+</div>
 ```
 
 设置基本的css
@@ -259,12 +269,23 @@ document.getElementById("btnCamera").addEventListener('tap', () => {
 #### 代码
 
 ```javascript
+// 地图
 document.getElementById("btnLocation").addEventListener("tap",()=>{
-    // 地图
-    let map = new plus.maps.Map("map");
-    map.showUserLocation(true)
-    // map.setCenter(new plus.maps.Point(116.635672,40.169419))
-    // map.centerAndZoom( new plus.maps.Point(112.926686,30.418633), 21);
+    // 把地图展示在 id为map的div中
+    // plus.maps.Map是plus提供的功能
+    // 格式： plus.maps.Map(div的id号)
+    let mapObj = new plus.maps.Map("map")
+
+    // 定位到当前设置所处的位置
+    // mapObj.showUserLocation(true)
+
+    // 自行设置地图的中心点
+    // mapObj.setCenter(new plus.maps.Point(116.599163,35.553089))
+    // 自行设置地图的中心点,设置缩放 21
+    mapObj.centerAndZoom( new plus.maps.Point(112.926686,30.418633), 21);
+
+    console.log(mapObj)
+
 })
 ```
 
@@ -277,155 +298,184 @@ document.getElementById("btnLocation").addEventListener("tap",()=>{
 直接上代码
 
 >```js
->// 打电话 
->var takePhone = function () {
->    plus.device.dial('10086')
->}
+>// 打电话
+>document.getElementById("btnPhone").addEventListener("tap",()=>{
+>        plus.device.dial("10086")
+>})
 >```
 
 需要注意的是: **`地图/电话 这两个功能只能在真机上测试哦`**
 
-
+### 完整代码
 
 ```html
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title></title>
-		<script src="js/mui.min.js"></script>
-		<link href="css/mui.min.css" rel="stylesheet" />
-		<style type="text/css">
-			.image-box {
-				width: 80%;
-				margin: 20px auto;
-				border-radius: 5px;
-				border: 1px solid #2AC845;
-				padding: 10px;
-				box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, .1);
-			}
-
-			.image-box img {
-				display: block;
-				width: 100%;
-			}
-			
-			#map {
-				width: 90%;
-				height: 500px;
-				margin: 10px auto;
-				/* position: fixed; */
-			/* 	top: 0px;
-				bottom: 0px;
-				line-height: 200px; */
-				text-align: center;
-				background: #FFFFFF;
-			}
-		</style>
-		<script type="text/javascript" charset="utf-8">
-			mui.init();
-		</script>
-
-		<script type="text/javascript">
-			document.addEventListener('plusready', function() {
-				// 5+runtime 初始化完成
-				console.log('原生能力已经就绪')
-				console.dir(plus)
-			})
-		</script>
-	</head>
-	<body>
-		<header class="mui-bar mui-bar-nav">
-			<h1 class="mui-title">标题</h1>
-		</header>
-		<div class="mui-content" id="content">
-			<ul class="mui-table-view mui-grid-view mui-grid-9">
-				<li id="btnCamera" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-					<a href="#">
-						<span class="mui-icon mui-icon-camera"></span>
-						<div class="mui-media-body">camera</div>
-					</a>
-				</li>
-				<li id="btnLocation"class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-					<a href="#">
-						<span class="mui-icon mui-icon-location"></span>
-						<div class="mui-media-body">Location</div>
-					</a>
-				</li>
-
-				<li id="btnPhone"class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-					<a href="#">
-						<span class="mui-icon mui-icon-phone"></span>
-						<div class="mui-media-body">Phone</div>
-					</a>
-				</li>
-			</ul>
-			<div id="map">
-				加载中...
-			</div>
-			<div class="image-box">
-				<img src="">
-			</div>
-
-		</div>
-		<nav class="mui-bar mui-bar-tab">
-			<a class="mui-tab-item mui-active">
-				<span class="mui-icon mui-icon-home"></span>
-				<span class="mui-tab-label">首页</span>
-			</a>
-			<a class="mui-tab-item">
-				<span class="mui-icon mui-icon-phone"></span>
-				<span class="mui-tab-label">电话</span>
-			</a>
-			<a class="mui-tab-item">
-				<span class="mui-icon mui-icon-email"></span>
-				<span class="mui-tab-label">邮件</span>
-			</a>
-			<a class="mui-tab-item">
-				<span class="mui-icon mui-icon-gear"></span>
-				<span class="mui-tab-label">设置</span>
-			</a>
-		</nav>
-
-		<script type="text/javascript">
-			// 拍照
-			document.getElementById("btnCamera").addEventListener('tap', () => {
-				if (plus) {
-					var carmera = plus.camera.getCamera(1) // 获取主摄像头对象
-					carmera.captureImage(function(url) {
-						// 注意这个地址不能用 需要转化
-						// 需要将相对手机路径变成绝对路径
-						let absoluteUrl = plus.io.convertLocalFileSystemURL(url)
-						// 我们把地址放到一个新的图片上
-						let imageBox = document.createElement("div")
-						imageBox.className = "image-box"
-						let img = document.createElement("img")
-						img.src = absoluteUrl
-						imageBox.appendChild(img)
-
-						document.getElementById("content").appendChild(imageBox)
-					})
-				}
-			})
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
 		
-			document.getElementById("btnPhone").addEventListener("tap",()=>{
-				// 打电话 
-				plus.device.dial('10086')
-			})
+    </script>
+	<style type="text/css">
+		.image-box {
+		    width: 80%;
+		    margin: 20px auto;
+		    border-radius: 5px;
+		    border: 1px solid #2AC845;
+		    padding: 10px;
+		    box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, .1);
+		}
+		
+		.image-box img {
+		    display: block;
+		    width: 100%;
+		}
+		#map {
+		    width: 90%;
+		    height: 500px;
+		    margin: 10px auto;
+		    text-align: center;
+		    background: #FFFFFF;
+		}
+	</style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">demo-92</h1>
+	</header>
+	<div class="mui-content">
+		<ul class="mui-table-view mui-grid-view mui-grid-9">
+			<li id="btnCamera" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+				<a href="#">
+					<span class="mui-icon mui-icon-camera"></span>
+					<div class="mui-media-body">拍照</div>
+				</a>
+			</li>
+		
 			
-			document.getElementById("btnLocation").addEventListener("tap",()=>{
-				// 地图
-				let map = new plus.maps.Map("map");
-				map.showUserLocation(true)
-				// map.setCenter(new plus.maps.Point(116.635672,40.169419))
-				// let em = document.getElementById("map");
+			<li id="btnLocation" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+				<a href="#">
+					<span class="mui-icon mui-icon-location"></span>
+					<div class="mui-media-body">Location</div>
+				</a>
+			</li>
+			
+			<li id="btnPhone" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+				<a href="#">
+					<span class="mui-icon mui-icon-phone"></span>
+					<div class="mui-media-body">Phone</div>
+				</a>
+			</li>
+		</ul>
+		
+		<div class="image-box">
+			<!-- 如果拍照成功，就把照片显示在这里 -->
+			<img src="" alt="" id="image">
+		</div>
+		
+		<h3>下面是地图</h3>
+		<div id="map">
+		    加载中...
+		</div>
+	</div>
+	<nav class="mui-bar mui-bar-tab">
+		<a class="mui-tab-item mui-active">
+			<span class="mui-icon mui-icon-home"></span>
+			<span class="mui-tab-label">首页</span>
+		</a>
+		<a class="mui-tab-item">
+			<span class="mui-icon mui-icon-phone"></span>
+			<span class="mui-tab-label">电话</span>
+		</a>
+		<a class="mui-tab-item">
+			<span class="mui-icon mui-icon-email"></span>
+			<span class="mui-tab-label">邮件</span>
+		</a>
+		<a class="mui-tab-item">
+			<span class="mui-icon mui-icon-gear"></span>
+			<span class="mui-tab-label">设置</span>
+		</a>
+	</nav>
+	<script type="text/javascript">
+		
+		// 添加事件监听。事件名是 plusready
+		// plusready 事件是由 5+runtime提供(它是hbuilderx 和 mui.js提供的)
+		// 它只会在手机模拟器或者是真机中才会触发
+		
+		// 如果你的代码是在pc浏览器中执行，则没有plus对象
+		
+		// 如果你的代码是在手机模拟器或者是真机中执行，则有plus对象
+		document.addEventListener('plusready', function(){
+			console.log('原生能力准备好了')
+			console.log(window.plus)
+		})
+		
+		// 拍照
+		// document.getElementById("btnCamera").addEventListener("click",()=>{
+		// 在移动端，我们用tap来代替click事件。
+		document.getElementById("btnCamera").addEventListener("tap",()=>{
+			console.log('tap')
+			// 调用相机来拍照
+			// 1. 获取摄像头 
+			// plus是自动加持的（只要在真机或者是模拟器中运行，就有plus）。
+			// plus.camera.getCamera: 是5+提供的系统功能。
+			// index: ( Number ) 可选 要获取摄像头的索引值
+			// 指定要获取摄像头的索引值，1表示主摄像头，2表示辅摄像头。如果没有设置则使用系统默认主摄像头。
+			let camera = plus.camera.getCamera(1);
+			console.log(camera)
+			// 2. 用摄像头拍照
+			camera.captureImage((url)=>{
+				// 拍照成功之后，保存之后，这里的url就是照片的地址
+				// 这个地址是相对地址，如果要想使用，则需要改成绝对路径。
 				
+				// 调用系统方法，来转换路径
+				let absoluteUrl = plus.io.convertLocalFileSystemURL(url)
+				
+				// 把照片设置到img上。
+				document.getElementById("image").src= absoluteUrl
+				console.log(url)
 			})
 			
-		</script>
-
-	</body>
+		})
+		
+		
+		// 地图
+		document.getElementById("btnLocation").addEventListener("tap",()=>{
+			// 把地图展示在 id为map的div中
+			// plus.maps.Map是plus提供的功能
+			// 格式： plus.maps.Map(div的id号)
+			let mapObj = new plus.maps.Map("map")
+			
+			// 定位到当前设置所处的位置
+			// mapObj.showUserLocation(true)
+			
+			// 自行设置地图的中心点
+			// mapObj.setCenter(new plus.maps.Point(116.599163,35.553089))
+			// 自行设置地图的中心点,设置缩放 21
+			mapObj.centerAndZoom( new plus.maps.Point(112.926686,30.418633), 21);
+			
+			console.log(mapObj)
+			
+		})
+		
+		
+		// 打电话
+		document.getElementById("btnPhone").addEventListener("tap",()=>{
+			plus.device.dial("15661302385")
+		})
+		
+		// 在pc浏览器执行
+		window.addEventListener('load', function(){
+			console.log('window.load')
+		})
+	</script>
+	
+</body>
 </html>
 ```
 
