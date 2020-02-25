@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			// Object.defineProperty() 在vue2.X版本中，用来实现数据响应式
+			// Proxy（es6） 将在vue3版本中，用来实现数据响应式
+			// Proxy:代理。它是一个构造器。
+			// 功能：通过Proxy创建对象，所创建的对象称为代理对象。
+			// 格式：
+			// var newObj = new Proxy(原对象,{代理列表})
+			
+			let obj = {
+				a: 1,
+				age:30
+			}
+			var newObj = new Proxy(obj,{
+				// target就是当前代理的那个原对象obj
+				// key就是当前要访问的属性
+				// receiver就是代理对象 newObj
+				get(target,key,receiver){
+					// 当访问对象的属性就会进入get函数
+					console.log( target,key,receiver )
+					return obj[key]
+				},
+				// value就是当前要设置的值
+				set(target,key,value){
+					// 当访问对象的属性就会进入set函数
+					console.log( target,key,value )
+					// return obj[key]
+				},
+			})
+			newObj.age = 20
+			// console.log( newObj.a )
+		</script>
+	</body>
+</html>

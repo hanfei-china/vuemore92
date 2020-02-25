@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.bootcss.com/vue/2.6.11/vue.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<h1 id="h1">
+			学习object.defineProperty
+		</h1>
+		<div id="div">
+			
+		</div>
+		<script type="text/javascript">
+			let obj = {
+				a: 1,
+				b: 2
+			}
+			
+			let _b = 2
+			Object.defineProperty(obj,"b",{
+				value: 40,
+				set(val){
+					// 拦截器
+					console.log( "你修改了b属性");
+					// 接下来去修改视图
+					document.getElementById("div").innerHTML = val
+					_b = val
+				},
+				get(){
+					console.log( "获取b属性");
+					// return obj.b
+					return _b
+				}
+			})
+			
+		</script>
+	</body>
+</html>

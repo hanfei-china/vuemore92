@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.bootcss.com/vue/2.6.11/vue.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<h1 id="h1">
+			学习object.defineProperty {{a}}-{{b}}
+			</h1>
+		
+		<script type="text/javascript">
+			let obj = {
+				a: 1
+			}
+			
+			
+			let _age = 20;
+			
+			// 如果我们设置了get,set 则当前的属性不能保存具体的值
+			Object.defineProperty(obj,"age",{
+				// get:function(){
+					
+				// },
+				get(){
+					// 当你去访问age属性时，它就会自动执行；
+					// 这个函数的返回值，就表示当前属性的值。
+					console.log("获取age")
+					// return Date.now()
+					return _age;
+				},
+				set(val){
+					// 当我们设置这个属性时，它就会执行
+					// 它会接收一个参数，就是当前要设置给这个属性的值
+					console.log("设置age为",val)
+					_age = val
+				}
+			})
+			
+			
+			const vm = new Vue({
+				el:"#h1",
+				data:{a:1,b:3}
+			})
+			
+			
+		</script>
+	</body>
+</html>

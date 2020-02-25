@@ -74,8 +74,8 @@ Object.defineProperty(对象, 属性名,{
 - `value`：该属性对应的初值。可以是任何有效的 JavaScript 值（数值，对象，函数等）。**默认为 [`undefined`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/undefined)**。
 - `writable`：为`true`时，value属性值才能被修改。**默认为 false**，相当是只读的。
 
-- `get`：一个给属性提供 getter 的方法，如果没有 getter 则为 `undefined`。当访问该属性时，该方法会被执行。**默认为 [`undefined`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/undefined)**。
-- `set`：一个给属性提供 setter 的方法，如果没有 setter 则为 `undefined`。当属性值修改时，触发执行该方法。该方法将接受唯一参数，即该属性新的参数值。**默认为 [`undefined`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/undefined)**。
+- `get`：一个给属性提供 get的方法，如果没有 getter 则为 `undefined`。当访问该属性时，该方法会被执行。**默认为 [`undefined`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/undefined)**。
+- `set`：一个给属性提供 set 的方法，如果没有 setter 则为 `undefined`。当属性值修改时，触发执行该方法。该方法将接受唯一参数，即该属性新的参数值。**默认为 [`undefined`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/undefined)**。
 
 >  如果一个描述符同时有(value或writable)和(get或set)关键字，将会产生一个异常。
 
@@ -293,6 +293,6 @@ vue2的核心原理就是这个api`Object.defineProperty()` ，看起来很简�
 
 ## 与vue的关联
 
-- vue.js中找到Object.defineProperty()
+- vue2.x中找到Object.defineProperty()
 - vue不支持ie8及更低版本，因为Object.defineProperty在这些版本中不可用。
 

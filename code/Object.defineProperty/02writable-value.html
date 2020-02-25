@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<h1>学习object.defineProperty</h1>
+		<script type="text/javascript">
+			// let obj = {
+			// 	a: 1,
+			// 	abc:100
+			// }
+			
+			
+			// Object.defineProperty(obj,"c",{
+			// 	// 是否允许修改
+			// 	// 默认是false，表示这个属性值就不能修改
+			// 	writable: true,
+				
+			// 	// 当前属性的初始值
+			// 	value:200
+			// })
+			
+			// console.log(obj.c )
+			// obj.c = 2
+			// console.log(obj.c )
+			// console.dir(obj)
+			const obj = {a:1}
+			//02writable-value.html:30 Uncaught TypeError: Assignment to constant variable.
+			// obj = {a:2}
+			// obj.a = 2
+			// console.log(obj)
+			
+			// 把对象中的属性修改它的属性描述符
+			Object.defineProperty(obj,"a",{
+				writable:false
+			})
+			obj.a = 2
+			console.log(obj)
+		</script>
+	</body>
+</html>

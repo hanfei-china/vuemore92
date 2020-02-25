@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.bootcss.com/vue/2.6.11/vue.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<h1 id="h1">
+			学习object.defineProperty
+		</h1>
+
+		<script type="text/javascript">
+			let obj = {
+				a: 1,
+				b: 2
+			}
+			
+			let obj1 = {};
+			// 写代码
+			// 思路：对obj中的所有属性进行遍历，然后给obj1用object.definePropety()
+			//      添加属性
+			
+			// 如果是var 就相当于是全局变量
+			// 如果是let,就会拥有一个块级作用域
+			
+			for(let key in obj) {
+				console.log(key);
+				// 给obj1添加同名的属性
+				Object.defineProperty(obj1,key,{
+					set(val){
+						// 给拦截器添加功能：如果所设置的属性值<0,
+						// 则报错
+						console.log("当前正在修改",key,"值是",val)
+						if(val >=0) {
+							
+							obj[key] = val
+						} else {
+							alert("拦截器发现了一个异常！值不能小于0")
+						}
+					},
+					get(){
+						console.log("当前获取",key,"值是")
+						return obj[key]
+					}
+				})
+			}
+			
+			// console.log(key)
+			
+			// console.log(obj1.b ) // 告诉我obj.b的值，同时还要能输出一条消息 
+			// obj1.a = 100; // 能修改obj.a的值，同时还要输出一条消息
+			console.log(obj1.a ) // 告诉我obj.a的值，同时还要能输出一条消息 
+			
+			
+			
+		</script>
+	</body>
+</html>
