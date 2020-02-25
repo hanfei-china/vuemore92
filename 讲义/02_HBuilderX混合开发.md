@@ -495,16 +495,16 @@ document.getElementById("btnLocation").addEventListener("tap",()=>{
 
 ### 步骤
 
-- 本地配置mainfest.json文件
+- 本地配置manifest.json文件
   - app图标
   - app启动图
   - 百度地图密钥（麻烦一些）
 - 云打包。
 - 下载并使用。
 
-#### 配置mainfest.json
+#### 配置manifest.json
 
-操作：配置[mainfest.json](http://ask.dcloud.net.cn/article/94)文件 , 此文件是配置我们app的各种配置,例如 图标,权限,启动屏等。
+操作：配置[manifest.json](http://ask.dcloud.net.cn/article/94)文件 , 此文件是配置我们app的各种配置,例如 图标,权限,启动屏等。
 
 - 图标
 
@@ -596,7 +596,7 @@ document.getElementById("btnLocation").addEventListener("tap",()=>{
 
 在实操之前有两个知识点要回顾一下：
 
-- 要打包项目，就必须要用mainfest.json文件，而h5项目中是没有的。
+- 要打包项目，就必须要用manifest.json文件，而vue开发的黑马项目中是没有的。
 - 在vue项目中，npm run build会把pulic中的资源打包进入dist目录。
 
 ### 步骤

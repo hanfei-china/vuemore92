@@ -1,21 +1,39 @@
-Object.definedProperty()
+Object.defineProperty()
 
 在vue2.x系列中，双向数据绑定的核心就是这个方法。
 
-## Object.definedProperty
+## Object.defineProperty
 
 > `Object.defineProperty()` 方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象。
 
 给对象添加属性的方式有：
 
 - 字面量
+
+  ```javascript
+  var obj = {
+      a: 1,
+      b: 2 
+  }
+  ```
+
 - 对象.属性名 = 值
+
+  ```javascript
+  obj.a  = 1;
+  ```
+
 - 对象["属性名"] = 值
-- Object.definedProperty()
+
+  ```javascript
+  obj["a"] = 1
+  ```
+
+- Object.defineProperty()
 
 ## 格式
 
-Object.definedProperty()
+Object.defineProperty()
 
 - 格式
 
@@ -95,11 +113,23 @@ for(var key of obj) {
 
 ### configurable
 
+```javascript
+// 定义属性
+Object.defineProperty(obj,"c",{
+    // 不允许再次配置这个属性
+    configurable: false,
+    // 这个属性能否被for in 循环遍历
+    enumerable:true,
+    value:100
+
+})
+```
+
 
 
 ### value和writable
 
-定义不能只读的属性
+定义只读的属性:
 
 ```javascript
 const obj = {
@@ -264,5 +294,5 @@ vue2的核心原理就是这个api`Object.defineProperty()` ，看起来很简�
 ## 与vue的关联
 
 - vue.js中找到Object.defineProperty()
-- vue不支持ie8及更低版本，因为Object.definedProperty在这些版本中不可用。
+- vue不支持ie8及更低版本，因为Object.defineProperty在这些版本中不可用。
 
