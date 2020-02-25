@@ -1,6 +1,10 @@
+Object.definedProperty()
 
+在vue2.x系列中，双向数据绑定的核心就是这个方法。
 
-## Object.definedProperty监听对象属性的变化
+## Object.definedProperty
+
+> `Object.defineProperty()` 方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象。
 
 给对象添加属性的方式有：
 
@@ -12,8 +16,6 @@
 ## 格式
 
 Object.definedProperty()
-
-`**Object.defineProperty()**` 方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象。
 
 - 格式
 
@@ -46,7 +48,7 @@ Object.defineProperty(对象, 属性名,{
 })
 ```
 
-
+说明
 
 - `configurable`： 为 true 时，属性才能重新被定义（再写一次Object.defineProperty）。**默认为 false**。
 - `enumerable`：为`true`时，该属性才能够出现在对象的枚举属性中，即可以使用for in循环访问。**默认为 false**。
@@ -59,7 +61,7 @@ Object.defineProperty(对象, 属性名,{
 
 >  如果一个描述符同时有(value或writable)和(get或set)关键字，将会产生一个异常。
 
-![image-20200218152252191](asset/image-20200218152252191.png)
+<img src="asset/image-20200218152252191.png" alt="image-20200218152252191" style="zoom:80%;" />
 
 
 
@@ -67,7 +69,33 @@ Object.defineProperty(对象, 属性名,{
 
 ### enumerable
 
+```javascript
+
+const obj = {
+    b:1
+}
+
+Object.defineProperty(obj,"a",{
+    value:1,
+    enumerable:false
+})
+
+Object.defineProperty(obj,"c",{
+    value:2,
+    enumerable:true
+})
+
+for(var key of obj) {
+    console.log(key)
+}
+
+```
+
+
+
 ### configurable
+
+
 
 ### value和writable
 
@@ -92,26 +120,26 @@ const定义的对象，它的属性还是可以修改的。我们可以通过wri
 
 在上面的代码中，如果给对象的属性赋值，并不会修改属性的值。
 
-进阶：对已有对象进行封装，以得到一个常量对象
+### 进阶：对已有对象进行封装，以得到一个常量对象
 
 ```javascript
 const obj = {
-          a:1,
-          b:2
-        }
-        function getConst(obj){
-          var _obj = {}
-          for(var key in obj){
-            Object.defineProperty(_obj,key,{
-              writable:false,
-              value: obj[key]
-            })
-          }
-          return _obj
-        }
-        var obj1 = getConst(obj)
+    a:1,
+    b:2
+}
+function getConst(obj){
+    var _obj = {}
+    for(var key in obj){
+        Object.defineProperty(_obj,key,{
+            writable:false,
+            value: obj[key]
+        })
+    }
+    return _obj
+}
+var obj1 = getConst(obj)
 
-        console.log("设置之后的值是：",obj1)
+console.log("设置之后的值是：",obj1)
 ```
 
 
@@ -151,7 +179,9 @@ console.log("设置之后的值是：",obj.age)
 
 
 
-把一个已有对象设置成只读的对象
+### 把一个已有对象设置成只读的对象
+
+- 思路：只不设置set
 
 ```javascript
 const obj = {
@@ -178,8 +208,6 @@ console.log("设置之后的值是：",obj1)
 
 
 ## 实现从数据到视图的变化
-
-
 
 ### 进阶示例：监听属性的变化
 
