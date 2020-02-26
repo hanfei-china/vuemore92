@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			
+			// 当某个事件发生时，多个观察者被执行
+			
+			function f1() {console.log("小磊在观察")}
+			let f2 = () => {console.log("小李在观察")}
+			
+			let f3 = function (){console.log("小宝在观察")}
+			let f4 = function() { console.log("小帅在观察") }
+			
+			// 一个对象 ，属性值就是数组
+			// 数组中添加函数
+			var obj = {
+				"wuhan": [],
+				"beijing":[],
+				"shanghai":[]
+			}
+			obj.wuhan.push( f1 )
+			obj.wuhan.push( f2 )
+			obj.wuhan.push( f4 )
+			
+			//------------------
+			obj.beijing.push(f3)
+			obj.beijing.push(f4)
+			
+			//-----
+			obj.shanghai.push(f4)
+			
+			
+			// 假设现在武汉的房子涨子，要去通知所有关心武汉房子的人
+			obj.wuhan.forEach(item => {
+				item()
+			})
+			// 假设现在北京的房子涨子，要去通知所有关心北京房子的人
+			console.log('假设现在北京的房子涨子，要去通知所有关心北京房子的人');
+			obj.beijing.forEach(item => {
+				item()
+			})
+			
+	// 		// arrA中包含三个观察者(这是一种事件)
+	// 		 var arrA = []
+	// 		 arrA.push(f1)
+	// 		 arrA.push(f2)
+	// 		 arrA.push(f3)
+			 
+	// 		 // arrB中包含一个观察者(这是另一种事件)
+	// 		 var arrB = []
+	// 		 arrB.push(f1)
+
+			
+	
+	// 		 // 循环去执行arrA
+	// 		 arrA.forEach(item => {
+	// 			 // 由于数组中放入的全是函数
+	// 			 // item就是一个函数
+	// 			 // console.log(item);
+	// 			 item()
+	// 		 })
+			 
+	// 		 // 循环去执行arrB
+	// 		 arrB.forEach(item => {
+	// 			 // 由于数组中放入的全是函数
+	// 			 // item就是一个函数
+	// 			 // console.log(item);
+	// 			 item()
+	// 		 })
+			 
+			 
+		</script>
+	</body>
+</html>

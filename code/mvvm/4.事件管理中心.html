@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			// 一个对象 ，属性值就是数组
+			// 数组中添加函数
+			var eventCenter = {
+				"wuhan": [],
+				"beijing":[],
+				"shanghai":[]
+			}
+			/*
+				wuhan,beijing,shanghai 都是事件名。
+				eventCenter.wuhan是一个数组，用来收集  关心 wuhan 这个事件
+				的观察者，它里面用来放数组
+			*/
+		   
+		   // 函数，就是观察者
+
+		   function f1() {console.log("小磊在观察")}
+		   let f2 = () => {console.log("小李在观察")}
+		   let f3 = function (){console.log("小宝在观察")}
+		   let f4 = function() { console.log("小帅在观察") }
+		   
+		   // 让观察者监视特定的事件 
+		   // f1观察者去监视wuhan这个事件。
+		   // 就是把它加入到一个数组中
+		   eventCenter.shanghai.push( f1 )
+		   
+		   eventCenter.wuhan.push( f1 )
+		   eventCenter.wuhan.push( f4 )
+		   
+		   eventCenter.beijing.push( f4 )
+		 
+
+		   // 当事件发生时，观察者要执行。
+		   // function emit(事件名){}
+		   function emit (eventName) {
+			   // 模拟这个事件发生，让所有与之对应的观察者都执行一次
+			   // 在这里写代码
+			   // 思路：根据事件名，去取出所有观察者，循环去执行
+			   var arr = eventCenter[eventName]
+			   // console.log(arr);
+			   // 如果取不到这个属性，说明这个事件不存在
+			   if(!arr) {
+				   return
+			   }
+			   arr.forEach(item => {
+				   item()
+			   })
+		   }
+		   
+		   // emit("wuhan");
+		   
+		   // emit("shanghai")
+		   emit("beijing11")
+ 
+		</script>
+	</body>
+</html>

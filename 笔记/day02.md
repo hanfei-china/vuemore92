@@ -359,3 +359,41 @@ console.log( obj1.abc ); // 返回undefined,但是，要同时提示为，这个
 
 ```
 
+参考：
+
+```javascript
+var obj = {
+		    a:1,
+		    b:2,
+			c:false
+		}
+		// 在Proxy中补全代码
+		var obj1 = new Proxy(obj, {
+			get(target,key){
+				// console.log(target,key);
+				// 1. 对象.hasOwnProperty(属性名）
+			    // 如果这个属性在obj的自有属性（不是指继承的）中不存在，则返回undefined,并提示
+				// 
+				//     对象是否有这个属性，有，就返回true
+				//          没有，就是false
+				
+				// 2 属性名 in 对象。
+				//   判断在对象及对象的原型链上是否能找到属性名
+				//          有，就返回true
+				//          没有，就是false
+				if(key in target) {
+					return target[key]
+				} else {
+					console.warn(`你要访问的属性名${key}在对象中不存在`)
+					return undefined
+				}
+				
+			}
+			
+		})
+		
+		console.log( obj1.a );   // 返回1
+		console.log( obj1.abc ); // 返回undefined,但是，要同时提示为，这个abc属性不存在！
+	
+```
+
