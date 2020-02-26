@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			// 问题描述，在如下代码中，如何获取
+			var obj = {a : 1, b :2}
+			var str = "a的值是{{a}},b的值是{{b}}"
+			// 写你的代码，完成目标：
+			// 思路 ：
+			//  把字符串str中的{{a}} 用obj["a"] 来代替
+			//  把字符串str中的{{b}} 用obj["b"] 来代替
+			 
+			//  正则表达式中，. 用来匹配任意字符
+			//               * 就是这个字符出现的次是不限次数
+			//               + 就是这个字符出现的次是1次以上
+			//               ? 表示非贪婪模式
+			 
+			 // 字符串.replace(正则表达式,回调函数);
+			 // 回调函数的格式说明如下：
+			 // function(匹配到的子串，p1,p2,...pn, 匹配到的子串在原字符串中的位置，原字符串){
+			 //     // .... 
+			 //     // p1,p2...pn 表示在正则表达式中第n个括号匹配的字符串。
+			 //     return 替换匹配到的子串的新内容
+			 // }
+			var newStr = str.replace(/{{(.+?)}}/g,function(objstr,p1){
+				console.log(objstr,p1)
+				return obj[p1]
+			}) ;
+			console.log(newStr); // "a的值是1, b的值是2"
+			
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script> -->
+	</head>
+	<body>
+		<div id="app">
+		{{salary}}
+		<br>
+		<input v-model="salary" type="text"/>
+		<br>
+		<input v-model="bonus" type="text"/>
+		<h2>{{bonus}}</h2></div>
+		</div>
+		
+		<script type="text/javascript">
+			// 实现一个基本的构造器
+			// 功能：
+			//   对options中data的所有属性进行拦截
+			function MVVM(options) {
+				// let _data = options.data
+				const {data,el} = options
+				// console.log(options.data)
+				// 通过Objecject.defineProperty来拦截对data属性的操作
+				// 在构造器内部，this是一个对象，就指向的是当前实例
+				// console.log(this === vm);
+				// this.abc = "123"
+				// 对data项中的属性进行拦截
+				for(let key in data) {
+					Object.defineProperty(this,key,{
+						set(val){
+							console.log(`${key} 设置${val}`)
+							data[key] = val
+						},
+						get() {
+							console.log(`获取${key}`)
+							return data[key]
+						}
+					})
+				}
+			
+				// 解析模板
+				new Compiler(el,this)
+			}
+		
+		
+		
+		   // 用来对模板进行解析，分析出哪个dom中需要显示数据初值
+		   // 哪些dom结点，当数据变化时，它们还要跟着更新
+		   // el : 选择器 #app
+		   // vm : 就是MVVM的实例
+		   function Compiler(el,vm){
+			   //选出对应的dom结构 
+			   this.dom = document.querySelector(el);
+			   this.vm = vm;
+			   // console.log(this.dom);
+			   this.compile( this.dom)
+			   
+		   }
+		   
+		   Compiler.prototype.compile = function(dom){
+			   // 整体目标：遍历dom，依次找出所有的dom节点，对它们做两件事：
+			   // childNodes 会收集所有的子节点
+			   //   包括换行，空格.....
+			   dom.childNodes.forEach(node=> {
+				   // 根据不同的节点类型来处理
+				   // 文本节点的nodeType === 3. 它就是文本
+				   // 元素节点的nodeType === 1. 它是标签
+				   // console.log(node.nodeType, node)
+				   if(node.nodeType === 3) {
+					   this.compileText(node)
+				   } else if(node.nodeType === 1){
+					   this.compileElement(node)
+					   // 如果是元素结点，则还要进一步去解析
+					   this.compile(node)
+				   }
+			   })
+			   // - 解析显示值。找出{{message}}，赋值为1000。
+			   // - 成为观察者。当这个属性变化时，可以再次去更新。
+			   // console.log( dom )
+		   }
+		   
+		   Compiler.prototype.compileText = function(dom) {
+			   console.log( "解析文本节点",dom)
+			   // 解析显示值。找出{{message}}，赋值为1000。
+			   // todo 成为观察者。当这个属性变化时，可以再次去更新。
+			   
+			   // 1. 取出文本节点的内容 
+			   var str = dom.textContent
+			   // 2. 通过正则替换
+			   // 一定要使用 =>
+			   var newStr = str.replace(/{{(.+?)}}/g,(objstr,p1)=>{
+				   // console.log(this)
+					// console.log(objstr,p1)
+				    return this.vm[p1]
+				}) ;
+				// console.log(this.vm)
+			   
+			   // 3. 显示替换的结果
+			   dom.textContent = newStr
+		   }
+		   
+		   Compiler.prototype.compileElement = function(dom) {
+		   	   console.log( "解析元素节点",dom)
+			   // 1. 检查是否有v-model属性
+			   console.dir(dom)
+			   // 当前节点有v-model属性
+			   if( dom.hasAttribute("v-model") ) {
+				   // 取出属性值：
+				   var key = dom.getAttribute("v-model");
+				   console.log(key)
+				   
+				   // 把对象中的key属性的值，显示在当前的input框中。
+				   dom.value = this.vm[key]
+				   
+			   }
+		   }
+		
+		</script>
+		
+		<script type="text/javascript">
+			var data = {
+				salary:15000,
+				bonus:50000,
+				abc:"info"
+			}
+			
+			var vm = new MVVM({
+				el:"#app",
+				data:data
+			})
+		</script>
+	</body>
+</html>

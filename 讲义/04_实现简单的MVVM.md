@@ -9,9 +9,63 @@
 
 
 
+目标：
+
+- 实现数据双向绑定功能。
+- 更深理解mvvm模型，数据驱动视图。
+
+
+
+m：model:数据,模型
+
+v：view:视图
+
+vm: 视图模型
+
+
+
+## 理解vuejs中的双向绑定
+
+- 从数据到视图。当数据变化时，视图也跟着变化。
+
+<img src="asset/image-20200226141518640.png" alt="image-20200226141518640" style="zoom: 50%;" />
+
+
+
+从视图到数据。
+
+<img src="asset/image-20200226141645381.png" alt="image-20200226141645381" style="zoom:67%;" />
+
+
+
+## mvvm与vuejs
+
+mvvm是一种设计模式。是实现数据双向绑定的一种方式。
+
+vue体现了mvvm的设计思想。
+
+![image-20200226141825447](asset/image-20200226141825447.png)
+
+![image-20200226142231450](asset/image-20200226142231450.png)
+
+
+
+
+
+
+
+
+
+
+
 ## 整体思路
 
 ### 从数据到视图
+
+两个阶段：
+
+- **最初始时，把要对象中的属性值显示在视图上。**
+- 当属性变化时，视图也要变。
 
 现象：
 
@@ -21,7 +75,7 @@
 
 实现技术：
 
-- 数据劫持：侵入到到数据内部，当数据（对象的属性值）发生变化时，我们可以得知。在它们变化时，发布这个通知。
+- 数据拦截：侵入到到数据内部，当数据（对象的属性值）发生变化时，我们可以得知。在它们变化时，发布这个通知。
 
 - 编译模板：分析出哪些dom是依赖于哪些数据的变化的。即当前数据变化时，它们要跟着变化。这里就要用到观察者模式。
 
@@ -34,13 +88,13 @@
 目标：
 
 - 写出构造器的基本架子，完成参数传递与获取；
-- 能过数据劫持：
+- 能过数据拦截：
   - 在代码外部，让MVVM实例可以操作data选项中的属性。
   - 在代码内部，能通过`this.属性名` 的方式去操作data选项中的属性。
 
 ```javascript
 function MVVM(options) {
-    //1. 数据劫持。
+    //1. 数据拦截。
     //    - 能让vm.salary可以访问到options.data.salary
     //    - 能让this.salary可以访问到options.data.salary
     const {data} = options
@@ -59,9 +113,6 @@ function MVVM(options) {
     
     // 测试：在内部可以通过this.属性名来直接访问数据
     this.salary = -1
-    
-    // 2.
-    
 }
 
 var data = {
@@ -85,19 +136,20 @@ console.log(data)
 
 ## 模板编译
 
+![image-20200226143136194](asset/image-20200226143136194.png)
+
 整体目标：遍历dom，依次找出所有的dom节点，对它们做两件事：
 
 - 解析显示值。找出{{message}}，赋值为1000。
 - 成为观察者。当这个属性变化时，可以再次去更新。
 
-
+<img src="asset/image-20200226150922997.png" alt="image-20200226150922997" style="zoom:50%;" />
 
 由于这个部分的功能也比较复杂，所以，额外新建一个构造器，来完这个部分的功能。
 
 ### 创建构造器
 
 ```javascript
-
 function Compiler(el,vm){
     this.vm = vm
     const domEL =document.querySelector(el)
@@ -108,8 +160,6 @@ Compiler.prototype.compile = function(el){
     console.log(el.childNodes)
     node.nodeType == 3; // 文本节点
     node.nodeType == 1;// 元素节点
-    
-    // 如果是元素节点
 }
 
 ```
@@ -132,6 +182,8 @@ function Compiler(el){
 Compiler.prototype.compile = function(el){
     // 获取 el下所有的子节点，循环遍历处理
     console.log(el.childNodes)
+    //node.nodeType == 3; // 文本节点
+    //node.nodeType == 1;// 元素节点
     el.childNodes.forEach(node => {
         if(node.nodeType === 3) {
             this.compileText(node)
@@ -139,9 +191,6 @@ Compiler.prototype.compile = function(el){
             this.compileElement(node)
         }
     })
-    //node.nodeType == 3; // 文本节点
-    //node.nodeType == 1;// 元素节点
-
 }
 Compiler.prototype.compileText = function(node) {
     console.log(`当前要编译的文本节点是`,node)
@@ -211,7 +260,7 @@ Compiler.prototype.compile = function(el){
 解析成：
 
 ```html
-<div>salary:10000, bonus:{{bonus}}</div>
+<div>salary:10000, bonus:5000</div>
 ```
 
 
@@ -245,10 +294,10 @@ Compiler.prototype.compileText = function(node) {
 
 思路：
 
-对元素结点，获取这个结点上所有属性，如果有v-model(或者其它于v-bind,v-if....)属性，就要做两件事情。
+对元素结点，获取这个结点上所有的属性，如果有v-model(或者其它于v-bind,v-if....)属性，就要做两件事情。
 
 - 显示初值。
-- 添加观察者，当
+- 添加观察者。
 
 对于如下元素结点，
 
@@ -256,9 +305,7 @@ Compiler.prototype.compileText = function(node) {
 <input type="text" v-model="salary" />
 ```
 
-我们关注是否包含v-model属性，及最后，要把v-model的值取出来，并给显示出来。
-
-
+我们关注是否包含v-model属性，最后要把v-model的值取出来，并给显示出来。
 
 ```javascript
 Compiler.prototype.compileElement = function(node) {
@@ -716,7 +763,7 @@ var obj = {a : 1, b :200}
 var str = "a的值是{{a}},b的值是{{b}}"
 // 写你的代码，完成目标：
 // var newStr = 
-console.log(newStr); // "a的值是1,bb的值是2"
+console.log(newStr); // "a的值是1, b的值是2"
 ```
 
 

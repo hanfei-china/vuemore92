@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script> -->
+	</head>
+	<body>
+		<div id="app">
+			<h2>{{salary}}</h2>
+			<span>{{salary}}</span>
+			<br>
+			<input v-model="salary" />
+		</div>
+		
+		<script type="text/javascript">
+			// 实现一个基本的构造器
+			// 功能：
+			//   对options中data的所有属性进行拦截
+			function MVVM(options) {
+				// let _data = options.data
+				const {data,el} = options
+				// console.log(options.data)
+				// 通过Objecject.defineProperty来拦截对data属性的操作
+				// 在构造器内部，this是一个对象，就指向的是当前实例
+				// console.log(this === vm);
+				// this.abc = "123"
+				// 对data项中的属性进行拦截
+				for(let key in data) {
+					Object.defineProperty(this,key,{
+						set(val){
+							console.log(`${key} 设置${val}`)
+							data[key] = val
+						},
+						get() {
+							console.log(`获取${key}`)
+							return data[key]
+						}
+					})
+				}
+			
+				// 解析模板
+				new Compiler(el,this)
+			}
+		
+		
+		
+		   // 用来对模板进行解析，分析出哪个dom中需要显示数据初值
+		   // 哪些dom结点，当数据变化时，它们还要跟着更新
+		   // el : 选择器 #app
+		   // vm : 就是MVVM的实例
+		   function Compiler(el,vm){
+			   //选出对应的dom结构 
+			   this.dom = document.querySelector(el)
+			   // console.log(this.dom);
+			   this.compile( this.dom)
+			   
+		   }
+		   Compiler.prototype.compile = function(dom){
+			   // 整体目标：遍历dom，依次找出所有的dom节点，对它们做两件事：
+			   
+			   // - 解析显示值。找出{{message}}，赋值为1000。
+			   // - 成为观察者。当这个属性变化时，可以再次去更新。
+			   console.log( dom )
+		   }
+		
+		</script>
+		
+		<script type="text/javascript">
+			var data = {
+				salary:5000,
+				bouns:5000,
+				abc:"info"
+			}
+			
+			var vm = new MVVM({
+				el:"#app",
+				data:data
+			})
+		</script>
+	</body>
+</html>
