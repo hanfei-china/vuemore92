@@ -58,3 +58,49 @@ function MVVM(options) {
 ```
 
 ![image-20200227103400394](asset/image-20200227103400394.png)
+
+
+
+
+
+## 服务器渲染
+
+SSR : server side render 。
+
+渲染是：数据（json） -----> html文档（dom ）  它是发生在服务器端的。
+
+即：从服务器获取回来的直接就是整个页面（包含数据）
+
+好处：
+
+- 打开快
+- 有利于SEO（让百度爬虫的可以收录你的网页）。
+
+缺点：
+
+- 不利于前后端分离开发
+
+
+
+## 客户端渲染
+
+ajax请求数据，数据通过vue.js在本地渲染。
+
+不利于SEO
+
+
+
+## vue-ssr
+
+vue官方提供了一个工具`vue-server-renderer`可以帮我们把vue实例转成html。
+
+就可以直接从服务器上使用vue，转成html返回。
+
+
+
+## nuxt.js的基本应用
+
+- 它是一个包，要额外安装。
+- 它集成了vue,vue-router,vuex,webpack,babel,vue-ssr.........................
+- 它不是vue官方的产品。
+- 它可以用vue开发服务器端渲染的单页应用
