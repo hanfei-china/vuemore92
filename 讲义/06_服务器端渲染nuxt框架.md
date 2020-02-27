@@ -192,7 +192,7 @@ npm i nuxt
 
 ### 自动配置路由
 
-默认会把 pages 中的页面，自动生成路由配置信息。
+nuxt.js会默认会把 **pages** 中的页面，自动生成路由配置信息。
 
 假设 `pages` 的目录结构如下：
 
@@ -347,7 +347,7 @@ nuxt把路由设置全放在一个配置文件中。
 
 1. 在pages的同级目录下新建一个views目录，并在下面创建一个名为abc.vue的文件,写入部分内容。
 
-2. 自定义路由如下
+2. 自定义路由如下：
 
 ```javascript
 module.exports = {
@@ -486,7 +486,11 @@ module.exports = {
 
 #### 获取接口数据
 
+思路：
 
+在asyncData在这个钩子函数（生命周期）中，去发axios请求，以对象的格式返回数据；
+
+它就会自动附加在vue组件的data上。
 
 ```js
 <template>
@@ -558,6 +562,17 @@ module.exports = {
 
 
 ## 生命周期
+
+- 在服务器端要执行：
+  - asyncData
+  - **beforeCreate(在服务器和客户端都会执行)**
+  - **created(在服务器和客户端都会执行)**
+- 在客户端要执行
+  - asyncData(在路由切换时，它也会执行)
+  - **beforeCreate(在服务器和客户端都会执行)**
+  - **created(在服务器和客户端都会执行)**
+  - mounted
+  - .....
 
 ![image-20200224151503678](asset/image-20200224151503678.png)
 

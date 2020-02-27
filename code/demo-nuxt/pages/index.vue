@@ -15,7 +15,21 @@
 				title:"hello nuxt",
 				list:["空山不见人","但闻人语响"]
 			}
-		}
+		},
+		asyncData(){
+			console.log("asyncData")
+		},
+		beforeCreate(){
+			console.log('beforeCreate')
+		},
+		created(){
+			console.log('created')
+		},
+		mounted(){
+			console.log('mounted')
+		},
+		
+		
 	}
 </script>
 

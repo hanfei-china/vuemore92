@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-	"serve":"nuxt",
+    "serve": "nuxt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.2",
     "nuxt": "^2.11.0"
   }
 }
