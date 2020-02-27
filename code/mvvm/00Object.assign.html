@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			// 如何快速把一个对象中的属性给另一个对象也
+			//  来一份
+			var methods = {
+				a: 1,
+				b:2,
+				do:function() {
+					console.log("ok")
+				}
+			}
+			
+			var obj1 = {c:1}
+			// 把methods对象中的属性给obj1也来一份
+			// 功能:把实现对象属性的复制。
+			// 格式：
+			//  Object.assign(目标对象，源对象1，源对象2..... )
+			//  把源对象1，2. .... 上的属性给目标对象也来一份
+			// Object.assign(obj1,methods)
+			Object.assign(obj1,{c:100},{d:2000},{e:90},{e1:9000})
+			// {c: 100, d: 2000, e: 90, e1: 9000}
+
+		</script>
+	</body>
+</html>
