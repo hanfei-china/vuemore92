@@ -42,13 +42,20 @@
 
 使用脚手架工具
 
-第一步：全局安装脚手架工具
+第一步：**全局安装**脚手架工具
 
 ```bash
 npm i -g create-nuxt-app
 ```
 
 第二步：创建项目
+
+```bash
+# create-nuxt-app 项目名
+create-nuxt-app demo-realworld-nuxt
+```
+
+在交互窗口中，选择如下：
 
 ![image-20200222155738997](asset/image-20200222155738997.png)
 
@@ -62,21 +69,29 @@ npm i -g create-nuxt-app
 
 ![image-20200222155759654](asset/image-20200222155759654.png)
 
+--------------------------------------------------------------------
 
+如果看到下面的内容，就表示项目初始化完成。
 
 ![image-20200222155901031](asset/image-20200222155901031.png)
 
 
 
+> 使用cd命令进入项目目录之后，可以通过`code .`(中间有个空格) 来启用vscode打开当前项目。
+
 ## 目录结构
 
-components:组件。其下的组件没有
+components:组件。
+
+- 其下的.vue中没有有asyncData钩子
 
 layouts:布局。
 
-middleware: 中间件目录
+middleware: 中间件目录。
 
-pages：页面。其下的.vue中才有asyncData钩子
+pages：页面。
+
+- 其下的.vue中才有asyncData钩子
 
 plugins:插件。
 
@@ -91,6 +106,8 @@ api: 补充一个接口定义文件夹
 utils:补充一个工具文件夹
 
 ## 自定义页面
+
+layout/default.vue: 它用来做布局。每一个页面的长相都是从它来的。我们可以把头和脚放在这里。
 
 <img src="asset/image-20200222163854520.png" alt="image-20200222163854520" style="zoom:50%;" />
 
@@ -122,6 +139,8 @@ utils:补充一个工具文件夹
 ```
 
 具体的代码在[这里](https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INSTRUCTIONS.md#header)
+
+重启项目，查看效果。
 
 ### 修改layouts/default.vue
 
@@ -277,9 +296,66 @@ layouts是布局的意思，其下的default.vue是整个页面的默认布局�
 
 ## 快速完成其它页面的布局
 
-### 登陆/注册
+除了主页之外，其它的页面快速搭建起来。
+
+### 登陆
 
 在pages下新建login.vue，其内容如下：
+
+```html
+<template>
+  <div class="auth-page">
+    <div class="container page">
+      <div class="row">
+        <div class="col-md-6 offset-md-3 col-xs-12">
+          <h1 class="text-xs-center">
+            Sign up
+          </h1>
+          <p class="text-xs-center">
+            <a href="">Have an account?</a>
+          </p>
+
+          <ul class="error-messages">
+            <li>That email is already taken</li>
+          </ul>
+
+          <form>
+            <fieldset class="form-group">
+              <input class="form-control form-control-lg" type="text" placeholder="Your Name">
+            </fieldset>
+            <fieldset class="form-group">
+              <input class="form-control form-control-lg" type="text" placeholder="Email">
+            </fieldset>
+            <fieldset class="form-group">
+              <input class="form-control form-control-lg" type="password" placeholder="Password">
+            </fieldset>
+            <button class="btn btn-lg btn-primary pull-xs-right">
+              Sign up
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: '',
+  data () {
+    return {
+
+    }
+  }
+}
+</script>
+```
+
+以上代码在[这里](https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INSTRUCTIONS.md#loginregister)复制
+
+### 注册
+
+在pages下新建signup.vue，其内容如下：
 
 ```html
 <template>
@@ -422,7 +498,7 @@ export default {
 
 ### 设置
 
-在pages下新建profile.vue，其内容如下：
+在pages下新建settings.vue，其内容如下：
 
 ```html
 <template>
@@ -506,7 +582,7 @@ export default {
 
 ### 文章页
 
-在pages下新建editor.vue，其内容如下：
+在pages下新建article.vue，其内容如下：
 
 ```html
 <template>
@@ -662,6 +738,11 @@ export default {
 - 获取[文章列表](https://github.com/gothinkster/realworld/tree/master/api#list-articles)：`/articles`
 
 ### 接口功能封装
+
+两步：
+
+- 对axios进行封装
+- 对接口功能进行封装
 
 在utils下新建request.js用来对axios进行封装；
 
@@ -1740,7 +1821,7 @@ export default createStore
 
 ### vscode中eslint自动修正
 
-.vscode\setting.json
+在项目根目录下创建：.vscode\settings.json
 
 ```json
 {
@@ -1754,6 +1835,8 @@ export default createStore
 
 
 ### 关闭eslint中的console
+
+在项目的根目录下：.eslintrc.js中，添一条规则
 
 ```javascript
 rules: {
