@@ -2,13 +2,13 @@
   <div class="article-page">
     <div class="banner">
       <div class="container">
-        <h1>How to build webapps that scale</h1>
+        <h1>{{ article.title }}</h1>
 
         <div class="article-meta">
           <a href=""><img src="http://i.imgur.com/Qr71crq.jpg"></a>
           <div class="info">
-            <a href="" class="author">Eric Simons</a>
-            <span class="date">January 20th</span>
+            <a href="" class="author">{{ article.author.username }}</a>
+            <span class="date">{{ article.createdAt }}</span>
           </div>
           <button class="btn btn-sm btn-outline-secondary">
             <i class="ion-plus-round" />
@@ -19,7 +19,7 @@
           <button class="btn btn-sm btn-outline-primary">
             <i class="ion-heart" />
             &nbsp;
-            Favorite Post <span class="counter">(29)</span>
+            Favorite Post <span class="counter">({{ article.favoritesCount }})</span>
           </button>
         </div>
       </div>
@@ -28,38 +28,29 @@
     <div class="container page">
       <div class="row article-content">
         <div class="col-md-12">
-          <p>
-            Web development technologies have evolved at an incredible clip over the past few years.
-          </p>
-          <h2 id="introducing-ionic">
-            Introducing RealWorld.
-          </h2>
-          <p>It's a great solution for learning how other frameworks work.</p>
+          {{ article.body }}
         </div>
       </div>
 
       <hr>
 
-      <div class="article-actions">
-        <div class="article-meta">
-          <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg"></a>
-          <div class="info">
-            <a href="" class="author">Eric Simons</a>
-            <span class="date">January 20th</span>
-          </div>
-
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-plus-round" />
-            &nbsp;
-            Follow Eric Simons <span class="counter">(10)</span>
-          </button>
-        &nbsp;
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="ion-heart" />
-            &nbsp;
-            Favorite Post <span class="counter">(29)</span>
-          </button>
+      <div class="article-meta">
+        <a href=""><img src="http://i.imgur.com/Qr71crq.jpg"></a>
+        <div class="info">
+          <a href="" class="author">{{ article.author.username }}</a>
+          <span class="date">{{ article.createdAt }}</span>
         </div>
+        <button class="btn btn-sm btn-outline-secondary">
+          <i class="ion-plus-round" />
+          &nbsp;
+          Follow Eric Simons <span class="counter">(10)</span>
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-sm btn-outline-primary">
+          <i class="ion-heart" />
+          &nbsp;
+          Favorite Post <span class="counter">({{ article.favoritesCount }})</span>
+        </button>
       </div>
 
       <div class="row">
@@ -118,8 +109,26 @@
 </template>
 
 <script>
+// 用户要通过：
+// http://localhost:3000/article/nuxt-js-5exs6x
+// 来访问 编号为nuxt-js-5exs6x的文章详情
+
+// 思路：用户进入页面时，去取出 文章编号，然后去请求接口，获取数据，渲染页面
+import { getArticle } from '@/api/article'
 export default {
-  name: '',
+  name: 'ArticleDetail',
+  async asyncData ({ params }) {
+    // 如何获取当前页面的参数的.... asyncData ({ params })
+    // console.log('11111111111111111')
+    // console.log(params)
+    const { slug } = params
+    const { data } = await getArticle(slug)
+
+    // console.log(data)
+    return {
+      article: data.article
+    }
+  },
   data () {
     return {
 

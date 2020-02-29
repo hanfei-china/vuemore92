@@ -1013,6 +1013,10 @@ export default {
 </script>
 ```
 
+hello1234qweasd
+
+
+
 使用过的用户名：
 
 ```javascript
@@ -1040,11 +1044,130 @@ export default {
 
 注意上面的token信息。
 
+## 登陆
+
+思路：
+
+- api/user.js添加一个登陆的接口
+- 在页面上，调用这个接口
+
+步骤：
+
+api/user.js
+
+```javascript
+// 对用户操作进行封装
+import request from '@/utils/request'
+
+// 用户注册功能
+export const register = (data) => {
+  return request({
+    url: 'api/users',
+    method: 'POST',
+    data
+  })
+}
+
+// 用户登陆
+export const login = (data) => {
+  return request({
+    url: 'api/users/login',
+    method: 'POST',
+    data
+  })
+}
+```
+
+login.vue
+
+```html
+<template>
+  <div class="auth-page">
+    <div class="container page">
+      <div class="row">
+        <div class="col-md-6 offset-md-3 col-xs-12">
+          <h1 class="text-xs-center">
+            登陆
+          </h1>
+          <p class="text-xs-center">
+            <a href="">Have an account?</a>
+          </p>
+
+          <ul class="error-messages">
+            <li v-for="(err,idx) in errArr" :key="idx">
+              {{ err }}
+            </li>
+          </ul>
+
+          <!-- 在vue中，阻止表单的提交动作 -->
+          <form @submit.prevent>
+            <fieldset class="form-group">
+              <input v-model="user.email" class="form-control form-control-lg" type="text" placeholder="Email">
+            </fieldset>
+            <fieldset class="form-group">
+              <input v-model="user.password" class="form-control form-control-lg" type="password" placeholder="Password">
+            </fieldset>
+            <button class="btn btn-lg btn-primary pull-xs-right" @click="hLogin">
+              登陆
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { login } from '@/api/user'
+export default {
+  data () {
+    return {
+      user: {
+        email: 'hello12345qweasd@qq.com',
+        password: 'hello12345qweasd'
+      },
+      errArr: []
+    }
+  },
+  methods: {
+    async hLogin () {
+      // 清空错误信息
+      this.errArr = []
+
+      try {
+        // 登陆成功之后，会返回用户信息
+        const { data } = await login({
+          user: this.user
+        })
+
+        console.log(data.user)
+
+        this.$router.push('/')
+      } catch (err) {
+        // 这个操作出错，不一定是后端接口返回的错误信息，还可能是本地网络问题
+        // 注册出错了
+        const { response } = err
+        if (response && response.data) {
+          // 收到后端接口返回的注册错误信息
+          const errObj = response.data.errors
+          for (const key in errObj) {
+            console.log(errObj[key][0])
+            this.errArr.push(`${key}: ${errObj[key][0]}`)
+          }
+        }
+        console.dir(err)
+      }
+    }
+  }
+}
+</script>
+
+```
+
 
 
 ## 使用vuex保存用户信息
 
-如果注册成功：
+如果注册(或者登陆)成功：
 
 - 跳转到index.vue，并在页面上显示当前用户的信息，由于用户信息在其它页面中也会用到，所以考虑保存在vuex中；
 
@@ -1056,7 +1179,7 @@ nuxt框架中已经集成 了vuex，不需要额外再去安装。它创建vuex�
 
 它有两种创建方式：
 
-1. 经典式。
+1. 经典式（不推荐使用）。
 2. 模块式。
 
 #### 经典式
@@ -1085,7 +1208,7 @@ const createStore = () => {
 
 #### 模块式
 
-在store目录下创建两个文件：state.js, mutations.js
+在store目录（项目初始化就有）下创建两个文件：state.js, mutations.js
 
 `store/state.js`
 
@@ -1131,7 +1254,13 @@ npm install js-cookie --save
 npm install cookieparser --save
 ```
 
-### 使用vuex保存数据
+
+
+设置完store下的vuex要重启一下项目。
+
+
+
+### 在login.vue中使用vuex保存数据
 
 ```javascript
 <script>
@@ -1190,6 +1319,8 @@ export default {
             </nuxt-link>
             <!-- <a class="nav-link active" href="">Home</a> -->
           </li>
+
+
           <template v-if="user">
             <li class="nav-item">
               <nuxt-link class="nav-link" to="/editor">
@@ -1208,6 +1339,7 @@ export default {
               </a>
             </li>
           </template>
+
           <template v-else>
             <li class="nav-item">
               <nuxt-link to="/signup">
@@ -1343,13 +1475,17 @@ request.interceptors.request.use((config) => {
 
 下面request.js写到插件中去：
 
-#### plugins/request.js
+### plugins/request.js
+
+由于在一个普通的.js文件中无法直接获取vuex数据，所以我们选择使用nuxt.js中的插件系统
+
+来封装axios。
 
 ```javascript
 /**
  * 必须结合 Nuxt 的插件规则才能获取到容器登录数据，所以这里把 axios 封装为一个 Nuxt 插件
  * 插件模块必须导出默认成员：一个函数
- * 还有一点：插件必须显示的注册到 nuxt.config.js 中
+ * 还有一点：插件必须 显式 地注册到 nuxt.config.js 中
  */
 
 // import request from '@/utils/request'
@@ -1392,7 +1528,28 @@ export default ({ store = {} }) => {
 
 
 
-#### 调用接口
+> 还要在vuxt.config.js中设置plugins
+
+```javascript
+plugins: ['~/plugins/request.js']
+```
+
+
+
+
+
+### 在api/xxxx.js中使用plugins/request.js
+
+以article.js为例：
+
+```javascript
+// import request from '@/utils/request'
+import { request } from '@/plugins/request'
+```
+
+
+
+### 调用接口
 
 ```javascript
 async hAdd () {
@@ -1752,8 +1909,6 @@ methods: {
 
 
 
-1
-
 
 
 ## 处理刷新vuex丢失问题
@@ -1772,47 +1927,112 @@ methods: {
 
 在服务器端，先要执行asyncData以获取数据，然后，再来渲染页面。而在asyncData这个钩子函数中，是无法获取客户端的任何信息的。
 
-### 添加数据容器
 
-在后端使用token数据 
 
-添加store/index.js
+思路：
+
+- 把用户（token....)信息保存在cookie中。
+- 由于信息保存在cookie中
+  - 页面刷新，cookie信息不会丢失
+  - 页面刷新时，所发出的请求会自动携带cookie。这样就可以把用户信息传递给后端服务器了。
+
+### 由于要用到cookie,所以先安装两个包
+
+```bash
+npm i cookieparser js-cookie 
+```
+
+cookieparser:在服务器端解析cookie
+
+js-cookie :在浏览器设置cookie
+
+### 在login.vue 设置cookie
+
+- const Cookie = require('js-cookie')
+- // 登陆成功，本地设置cookie
 
 ```javascript
-import Vuex from 'vuex'
+<script>
+import { login } from '@/api/user'
+const Cookie = require('js-cookie')
+export default {
+  data () {
+    return {
+      user: {
+        email: 'hello12345qweasd@qq.com',
+        password: 'hello12345qweasd'
+      },
+      errArr: []
+    }
+  },
+  methods: {
+    async hLogin () {
+      // 清空错误信息
+      this.errArr = []
 
-const cookieparser = process.server ? require('cookieparser') : undefined
+      try {
+        // 登陆成功之后，会返回用户信息
+        const { data } = await login({
+          user: this.user
+        })
 
-// 在nuxt中，store是一个函数。
-const createStore = () => {
-  return new Vuex.Store({
-    state: () => ({
-      user: null
-    }),
-    mutations: {
-      setUser (state, user) {
-        state.user = user
-      }
-    },
-    actions: {
-    // 是nuxtjs中额外提供的api,专门用来在服务器渲染来填充vuex数据容器的。
-      nuxtServerInit ({ commit }, { req }) {
-        let user = null
-        if (req.headers.cookie) {
-          const parsed = cookieparser.parse(req.headers.cookie)
-          console.log(parsed)
-          try {
-            user = JSON.parse(parsed.user)
-          } catch (err) {
-            // No valid cookie found
+        console.log(this.$store)
+
+        // 把用户数据保存在vuex中
+        this.$store.commit('setUser', data.user)
+
+        // 登陆成功，本地设置cookie
+        Cookie.set('user', data.user)
+
+        this.$router.push('/')
+      } catch (err) {
+        // 这个操作出错，不一定是后端接口返回的错误信息，还可能是本地网络问题
+        // 注册出错了
+        const { response } = err
+        if (response && response.data) {
+          // 收到后端接口返回的注册错误信息
+          const errObj = response.data.errors
+          for (const key in errObj) {
+            console.log(errObj[key][0])
+            this.errArr.push(`${key}: ${errObj[key][0]}`)
           }
         }
-        commit('setUser', user)
+        console.dir(err)
       }
     }
-  })
+  }
 }
-export default createStore
+</script>
+```
+
+![image-20200229173011799](asset/image-20200229173011799.png)
+
+### 在后端使用cookie数据设置vuex 
+
+添加store/actions.js
+
+```javascript
+//  process.server  是nuxt.js提供的，用来判断是不是在服务器端
+const cookieparser = process.server ? require('cookieparser') : undefined
+export default {
+  // 是nuxtjs中额外提供的api,专门用来在服务器渲染来填充vuex数据容器的。
+  // 取取浏览器传过来的cookie
+  nuxtServerInit ({ commit }, { req }) {
+    console.log('.................nuxtServerInit')
+    let user = null
+    if (req.headers.cookie) {
+      const parsed = cookieparser.parse(req.headers.cookie)
+      console.log(parsed)
+      try {
+        user = JSON.parse(parsed.user)
+      } catch (err) {
+        // No valid cookie found
+      }
+    }
+    commit('setUser', user)
+  }
+}
+
 ```
 
 

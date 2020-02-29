@@ -41,11 +41,11 @@
                 <i class="ion-heart" /> {{ article.favoritesCount }}
               </button>
             </div>
-            <a href="" class="preview-link">
+            <nuxt-link class="preview-link" :to="'/article/'+article.slug">
               <h1>{{ article.title }}</h1>
               <p>{{ article.description }}</p>
               <span>Read more...</span>
-            </a>
+            </nuxt-link>
           </div>
         </div>
 
