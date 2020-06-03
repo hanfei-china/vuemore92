@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<h1>学习object.defineProperty</h1>
+		<script type="text/javascript">
+			let obj = {
+				a: 1,
+				abc:100
+			}
+			
+			// 写代码，让obj.a,obj.abc是只读的，不能再去修改它们的值
+			// 写你的代码 
+			for(var key in obj) {
+				console.log(key);
+				Object.defineProperty(obj,key,{
+					writable:false
+				})
+			}
+
+			obj.a = 100;
+			obj.abc = 1;
+			
+			console.log(obj)
+			
+			
+		</script>
+	</body>
+</html>

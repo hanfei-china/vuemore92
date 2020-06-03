@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- <script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script> -->
+	</head>
+	<body>
+		<div id="app">
+			<div>
+				<h3>{{salary}}--{{bonus}}</h3>
+				<h2>{{salary}}</h2>
+				<input type="text" v-model="salary">
+			</div>
+			
+		</div>
+		
+		<script type="text/javascript">
+			// 定义一个构造器
+			function EventCenter () {
+			   this.eCenter = {
+				   // "wuhan" : [         ]
+			   }
+			}
+			
+			// 给指定的事件，添加观察者
+			/*
+				eventName: 要监视的事件名
+				callback: 观察者。当这个事件发生时，要执行的函数
+			*/   
+			EventCenter.prototype.addListener = function(eventName,callback){
+			   // 给指定的事件，添加观察者
+			   // 1. 取出当前事件中心 中，监视这个事件的所有观察者
+			   var arr = this.eCenter[eventName]
+			   if(!arr) {
+				   // 说明这个事件名，在事件中心没有。
+				   // 添加一个属性，值就是空数组
+				   this.eCenter[eventName] = []
+				   // 再来去添加观察者
+				   this.eCenter[eventName].push(callback)
+			   } else {
+				   
+				// 2. 把callback添加到这个数组中
+				arr.push( callback )
+			   }
+			}
+			// 发布一个事件
+			// 当某个事件发生时，去循环调用所有的对应的观察者
+			EventCenter.prototype.emit = function(eventName){
+				// 取出事件中心 当前事件的所有观察者，循环执行
+				console.log("发布",eventName, this.eCenter[eventName]	  ) 
+				var arr = this.eCenter[eventName];
+				if(arr) {
+					arr.forEach(item =>{
+						item()
+					})
+				}
+			}
+			
+			
+		</script>
+		
+		<script type="text/javascript">
+			
+			// 创建一个观察者
+			var ec = new EventCenter()
+			
+			// 实现一个基本的构造器
+			// 功能：
+			//   对options中data的所有属性进行拦截
+			function MVVM(options) {
+				// let _data = options.data
+				const {data,el} = options
+				// console.log(options.data)
+				// 通过Objecject.defineProperty来拦截对data属性的操作
+				// 在构造器内部，this是一个对象，就指向的是当前实例
+				// console.log(this === vm);
+				// this.abc = "123"
+				// 对data项中的属性进行拦截
+				for(let key in data) {
+					Object.defineProperty(this,key,{
+						// val 是新值
+						set(val){
+							if(val == data[key]) {
+								return
+							}
+							console.log(`${key} 设置${val}`)
+							data[key] = val;
+							// 修改了属性值，则要通过所有对应的观察者
+							
+							// 发布事件，则所有的观察者都应该去执行
+							ec.emit(key);
+						},
+						get() {
+							console.log(`获取${key}`)
+							return data[key]
+						}
+					})
+				}
+			
+				// 解析模板
+				new Compiler(el,this)
+			}
+		
+		
+		
+		   // 用来对模板进行解析，分析出哪个dom中需要显示数据初值
+		   // 哪些dom结点，当数据变化时，它们还要跟着更新
+		   // el : 选择器 #app
+		   // vm : 就是MVVM的实例
+		   function Compiler(el,vm){
+			   //选出对应的dom结构 
+			   this.dom = document.querySelector(el);
+			   this.vm = vm;
+			   
+			   // 编译模板
+			   this.compile( this.dom) 
+		   }
+		   
+		   // - 解析显示值。找出{{message}}，赋值为1000。
+		   // - 成为观察者。当这个属性变化时，可以再次去更新。
+		   Compiler.prototype.compile = function(dom){
+			   // 整体目标：遍历dom，依次找出所有的dom节点，对它们做两件事：
+			   // childNodes 会收集所有的子节点
+			   //   包括换行，空格.....
+			   dom.childNodes.forEach(node=> {
+				   // 根据不同的节点类型来处理
+				   // 文本节点的nodeType === 3. 它就是文本
+				   // 元素节点的nodeType === 1. 它是标签
+				   // console.log(node.nodeType, node)
+				   if(node.nodeType === 3) {
+					   this.compileText(node)
+				   } else if(node.nodeType === 1){
+					   this.compileElement(node)
+					   // 如果是元素结点，则还要进一步去解析
+					   this.compile(node)
+				   }
+			   })
+			   
+		
+		   }
+		   
+		   Compiler.prototype.compileText = function(dom) {
+			   console.log( "解析文本节点",dom)
+			   // 解析显示值。找出{{message}}，赋值为1000。
+			  
+			  var arrkeys = []; // 收集当前要观察的所有属性名
+			   
+			   // 1. 取出文本节点的内容 
+			   var str = dom.textContent
+			   // 2. 通过正则替换
+			   // 一定要使用 =>
+			   var newStr = str.replace(/{{(.+?)}}/g,(objstr,p1)=>{
+				    arrkeys.push(p1)
+				    return this.vm[p1]
+				}) ;
+				// console.log(this.vm)
+			   
+			   // 3. 显示替换的结果
+			   dom.textContent = newStr
+			   
+			 
+			   
+			   // 添加观察者
+			   arrkeys.forEach(key => {
+				// 给事件中心添加事件   
+				ec.addListener(key,()=>{
+					console.log(`${key},变化了`)
+					
+					// 1. 取出文本节点的内容 str
+				
+					// 2. 通过正则替换
+					// 一定要使用 =>
+					var newStr = str.replace(/{{(.+?)}}/g,(objstr,p1)=>{
+							
+						return this.vm[p1]
+					}) ;
+					// 3. 显示替换的结果
+					dom.textContent = newStr
+				})
+			   })
+			   
+			   
+		   }
+		   
+		   Compiler.prototype.compileElement = function(dom) {
+		   	   console.log( "解析元素节点",dom)
+			   // 1. 检查是否有v-model="salary"属性
+			   console.dir(dom)
+			   // 当前节点有v-model属性
+			   if( dom.hasAttribute("v-model") ) {
+				   // 取出属性值：
+				   // 把对象中的key属性的值，显示在当前的input框中。
+				   var key = dom.getAttribute("v-model");
+				   dom.value = this.vm[key]
+				   
+				   // 添加监听者
+				   // 当key属性发生变化时，去更新input框中的值
+				   ec.addListener(key,()=>{
+					   dom.value = this.vm[key]
+				   })
+				   
+				   // 给元素本身添加input事件
+				   dom.addEventListener("input",(e)=>{
+					   // console.dir(e)
+					   // 1. 获取当前用户改完之后的值
+					   console.log(e.target.value)
+					   // 2. 设置给对象的属性值（数据）
+					   //    会进入到set拦截器
+					   this.vm[key] = e.target.value
+					   
+					   console.log("用户在input中做了修改")
+				   })
+				   
+			   }
+		   }
+		
+		</script>
+		
+		<script type="text/javascript">
+			var data = {
+					salary:15000,
+					bonus:50000,
+					abc:"info"
+				}
+			
+			var vm = new MVVM({
+				el:"#app",
+				data
+			})
+		</script>
+	</body>
+</html>
